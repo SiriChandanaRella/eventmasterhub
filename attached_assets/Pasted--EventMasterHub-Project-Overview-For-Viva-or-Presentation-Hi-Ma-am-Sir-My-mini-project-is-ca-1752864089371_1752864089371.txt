@@ -1,0 +1,231 @@
+🌟 EventMasterHub - Project Overview (For Viva or Presentation)
+
+Hi Ma'am/Sir,
+My mini project is called EventMasterHub, which is a Flask-based event management web application. I built this from scratch using Python and Flask, and it allows admins to create events, manage them, and allow users to register for them.
+🛠️ What I Used (Tech Stack)
+
+    Python with Flask framework (for backend logic)
+
+    HTML/CSS + Bootstrap (for frontend user interface)
+
+    SQLite database (for storing event and registration data)
+
+    Jinja2 templates (used by Flask to render dynamic HTML)
+
+    qrcode Python library (for QR code generation for events)
+
+📁 Project Structure
+
+EventMasterHub/
+├── app.py                # Main Flask application
+├── templates/            # All HTML templates
+│   ├── index.html
+│   ├── admin_dashboard.html
+│   ├── create_event.html
+│   └── ...
+├── static/               # Custom CSS and JS
+├── uploads/              # Uploaded event videos
+├── requirements.txt      # Python dependencies
+
+🔧 How I Built It (Step-by-Step)
+
+    Created a virtual environment using:
+
+python3 -m venv eventhub-venv
+source eventhub-venv/bin/activate
+
+Installed Flask and other dependencies:
+
+    pip install -r requirements.txt
+
+    Set up the Flask app in app.py:
+
+        Created routes like:
+
+            / → homepage
+
+            /admin/login → for admin login
+
+            /admin/create_event → form to add event
+
+            /event/<event_id> → detail view for event
+
+    Added templates (HTML) inside the templates/ folder using Jinja2 syntax.
+
+    Handled event creation:
+
+        Admin fills a form → event saved to database
+
+        Video upload or video URL is also supported
+
+    User Registration:
+
+        User can register for an event using a form
+
+        Registration is saved and a QR code is generated
+
+    Admin Dashboard:
+
+        Admin can see all events and number of registrations per event
+
+🧪 Demo Example
+
+    I added test data like:
+
+        Event: “TechFest 2025” – with title, date, location, and video
+
+        I registered as a user to check everything works
+
+        QR code was generated automatically
+
+✅ Features
+Feature	Description
+Admin Login	Only admins can create/edit events
+Create Events	With title, date, location, video
+User Registration	Register with name & email
+QR Code Generation	For registered users
+Dashboard	Admin can see total registrations
+❓ What I Learned
+
+    How to structure a Flask web app
+
+    How to use templates with dynamic data
+
+    Handling file uploads (video)
+
+    Working with forms, sessions, and routes
+
+    Using SQLite and Flask together
+
+🚀 Future Improvements (If time permits)
+
+    Add event calendar view
+
+    Allow users to view all events
+
+    Add email confirmation on registration
+
+    Deploy on cloud (like Render or Replit)
+
+🗣️ Closing Line
+
+This project helped me understand how to connect frontend, backend, and database into a working system. It's like a mini version of an actual event management portal.
+🔸 Main Structure Overview
+
+EventMasterHub/
+├── app.py                  ← Main Flask app (entry point)
+├── templates/              ← HTML templates (frontend)
+├── static/                 ← CSS, JavaScript, media
+├── uploads/                ← Uploaded video files
+├── README.md               ← Project documentation
+├── pyproject.toml          ← For dependency management (optional)
+├── requirements.txt        ← Python dependencies
+└── (venv)                  ← Your virtual environment (not submitted)
+
+🧠 Backend Logic (Python)
+app.py
+
+    This is the heart of the application.
+
+    Initializes the Flask app.
+
+    Defines routes (URLs like /, /admin/dashboard, /register).
+
+    Handles logic like:
+
+        Admin login
+
+        Event creation/editing
+
+        Form processing
+
+        QR code generation
+
+        File uploads
+
+        Data storage (currently in memory for local use)
+
+    Uses session for login and flash for messages.
+
+    Linked to HTML templates using render_template().
+
+🖼️ Templates (Frontend)
+
+Located in the templates/ folder. These are rendered by Flask.
+File	Purpose
+base.html	Common layout with navbar/footer; inherited by all others
+index.html	Home page shown at /
+admin_login.html	Admin login form (/admin/login)
+admin_dashboard.html	Admin view of events and registrations
+create_event.html	Admin form to create a new event
+edit_event.html	Edit existing events
+event_detail.html	View individual event info (video, description, QR)
+register.html	User registration form
+registration_success.html	Confirmation page after registration
+📁 Static Files
+
+Found in the static/ folder:
+
+    custom.css → Custom styles
+
+    main.js → JS logic for form enhancements (optional)
+
+    Images, fonts, or logos can also be added here
+
+📤 Uploads
+
+    Folder: uploads/
+
+    Stores uploaded video files (MP4, MOV, etc.)
+
+    Flask saves files here using secure_filename() from werkzeug
+
+📄 Supporting Files
+File	Purpose
+requirements.txt	Lists Python libraries needed (Flask, qrcode, etc.)
+pyproject.toml	(Optional) Modern dependency management with Poetry
+README.md	Docs for setup, features, deployment
+.env (not always present)	Can store config like SECRET_KEY or DB URL (not mandatory in this case)
+⚙️ Major Features and Links
+Feature	URL/Route	File That Handles It
+Home Page	/	index.html, app.py
+Admin Login	/admin/login	admin_login.html, app.py
+Dashboard	/admin/dashboard	admin_dashboard.html, app.py
+Create Event	/admin/create_event	create_event.html, app.py
+Edit Event	/admin/edit_event/<id>	edit_event.html, app.py
+Register for Event	/register/<event_id>	register.html, app.py
+View Event	/event/<id>	event_detail.html, app.py
+🧠 Internal Logic (simplified)
+
+    Events are stored in a Python list (dictionary-based objects).
+
+    Registrations are also stored in memory.
+
+    When a new event is created, it's appended to the list.
+
+    QR codes are generated with the qrcode Python package.
+
+    Flask’s session is used to maintain admin login state.
+
+    Templates use Jinja2 syntax: {{ }} and {% %}.
+
+If your teacher says:
+
+    "Show me the code where the admin creates an event."
+    ✅ Go to app.py, search for @app.route('/admin/create_event')
+
+    "Where does the HTML for this page come from?"
+    ✅ templates/create_event.html
+
+    "How is data passed from backend to frontend?"
+    ✅ Using render_template() and request.form, then displayed using Jinja2.
+
+Let me know if you want:
+
+    A diagram of how everything connects
+
+    Short answers for viva questions
+
+    Deployment steps again
+
+    Or if you want to switch to using a database like SQLite or PostgreSQL later.
