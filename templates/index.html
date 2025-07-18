@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Home - EventMasterHub{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Welcome to EventMasterHub</h1>
+                <p class="lead mb-4">Discover, register, and manage events with ease. Your premier platform for event management and registration.</p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('event_list') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Browse Events
+                    </a>
+                    <a href="{{ url_for('calendar') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-calendar me-2"></i>View Calendar
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-calendar-check" style="font-size: 12rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Events Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">
+                    <i class="fas fa-star text-warning me-2"></i>
+                    Featured Events
+                </h2>
+            </div>
+        </div>
+        
+        {% if events %}
+            <div class="row">
+                {% for event in events %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if event.image_url %}
+                                <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="card-text text-muted flex-grow-1">
+                                    {{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}
+                                </p>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        {{ event.date.strftime('%B %d, %Y at %I:%M %p') }}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ event.location }}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-users me-1"></i>
+                                        {{ event.registration_count }}/{{ event.capacity }} registered
+                                    </small>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-primary flex-grow-1">
+                                        <i class="fas fa-info-circle me-1"></i>View Details
+                                    </a>
+                                    {% if not event.is_full %}
+                                        <a href="{{ url_for('register', event_id=event.id) }}" class="btn btn-success">
+                                            <i class="fas fa-user-plus me-1"></i>Register
+                                        </a>
+                                    {% else %}
+                                        <span class="btn btn-secondary disabled">
+                                            <i class="fas fa-users me-1"></i>Full
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('event_list') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i>View All Events
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                <h3 class="text-muted">No events available</h3>
+                <p class="text-muted">Check back later for upcoming events!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">Why Choose EventMasterHub?</h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <div class="bg-primary rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-calendar-check fa-2x text-white"></i>
+                    </div>
+                    <h4>Easy Registration</h4>
+                    <p class="text-muted">Quick and simple event registration process with instant confirmation.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <div class="bg-success rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-qrcode fa-2x text-white"></i>
+                    </div>
+                    <h4>QR Code Access</h4>
+                    <p class="text-muted">Get unique QR codes for easy check-in and event access.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <div class="bg-info rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-envelope fa-2x text-white"></i>
+                    </div>
+                    <h4>Email Notifications</h4>
+                    <p class="text-muted">Receive instant email confirmations and event updates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

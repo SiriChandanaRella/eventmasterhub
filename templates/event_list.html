@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Events - EventMasterHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    All Events
+                </h2>
+                <a href="{{ url_for('calendar') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar me-2"></i>Calendar View
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="search" class="form-label">Search Events</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Search by title..." value="{{ search_query }}">
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat }}" {{ 'selected' if cat == selected_category else '' }}>
+                                        {{ cat }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="date" class="form-label">Date Filter</label>
+                            <select class="form-select" id="date" name="date">
+                                <option value="">All Dates</option>
+                                <option value="today" {{ 'selected' if selected_date == 'today' else '' }}>Today</option>
+                                <option value="this_week" {{ 'selected' if selected_date == 'this_week' else '' }}>This Week</option>
+                                <option value="this_month" {{ 'selected' if selected_date == 'this_month' else '' }}>This Month</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <a href="{{ url_for('event_list') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Events Grid -->
+    {% if events %}
+        <div class="row">
+            {% for event in events %}
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if event.image_url %}
+                            <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <span class="badge bg-secondary">{{ event.category }}</span>
+                            </div>
+                            
+                            <p class="card-text text-muted flex-grow-1">
+                                {{ event.description[:100] if event.description else 'No description available' }}
+                                {% if event.description and event.description|length > 100 %}...{% endif %}
+                            </p>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ event.date.strftime('%B %d, %Y at %I:%M %p') }}
+                                </small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ event.location }}
+                                </small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ event.registration_count }}/{{ event.capacity }} registered
+                                </small>
+                            </div>
+                            
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar" style="width: {{ (event.registration_count / event.capacity * 100) }}%"></div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-primary flex-grow-1">
+                                    <i class="fas fa-info-circle me-1"></i>Details
+                                </a>
+                                {% if not event.is_full %}
+                                    <a href="{{ url_for('register', event_id=event.id) }}" class="btn btn-success">
+                                        <i class="fas fa-user-plus me-1"></i>Register
+                                    </a>
+                                {% else %}
+                                    <span class="btn btn-secondary disabled">
+                                        <i class="fas fa-users me-1"></i>Full
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Results Info -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Showing {{ events|length }} event{{ 's' if events|length != 1 else '' }}
+                    {% if search_query or selected_category or selected_date %}
+                        (filtered results)
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+            <h3 class="text-muted">No events found</h3>
+            {% if search_query or selected_category or selected_date %}
+                <p class="text-muted">Try adjusting your search filters.</p>
+                <a href="{{ url_for('event_list') }}" class="btn btn-primary">
+                    <i class="fas fa-refresh me-2"></i>Show All Events
+                </a>
+            {% else %}
+                <p class="text-muted">Check back later for upcoming events!</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

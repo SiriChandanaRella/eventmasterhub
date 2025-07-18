@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} - EventMasterHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Event Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            {% if event.image_url %}
+                <div class="position-relative mb-4">
+                    <img src="{{ event.image_url }}" class="img-fluid rounded" alt="{{ event.title }}" style="width: 100%; height: 300px; object-fit: cover;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 rounded d-flex align-items-end">
+                        <div class="p-4 text-white">
+                            <h1 class="display-5 fw-bold mb-2">{{ event.title }}</h1>
+                            <p class="lead mb-0">{{ event.category }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-primary text-white p-5 rounded mb-4">
+                    <h1 class="display-5 fw-bold mb-2">{{ event.title }}</h1>
+                    <p class="lead mb-0">{{ event.category }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Event Details -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle me-2"></i>Event Details
+                    </h3>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Date & Time:</strong></div>
+                        <div class="col-sm-9">
+                            <i class="fas fa-calendar me-2"></i>
+                            {{ event.date.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Location:</strong></div>
+                        <div class="col-sm-9">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            {{ event.location }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Category:</strong></div>
+                        <div class="col-sm-9">
+                            <span class="badge bg-secondary">{{ event.category }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Capacity:</strong></div>
+                        <div class="col-sm-9">
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-3" style="height: 20px;">
+                                    <div class="progress-bar" style="width: {{ (event.registration_count / event.capacity * 100) }}%">
+                                        {{ event.registration_count }}/{{ event.capacity }}
+                                    </div>
+                                </div>
+                                <span class="text-muted">{{ event.available_spots }} spots left</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if event.description %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5>Description</h5>
+                                <p class="text-muted">{{ event.description }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Video Section -->
+            {% if event.video_url or event.video_file %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-play-circle me-2"></i>Event Video
+                        </h5>
+                        
+                        {% if event.video_url %}
+                            <div class="ratio ratio-16x9">
+                                <iframe src="{{ event.video_url }}" allowfullscreen></iframe>
+                            </div>
+                        {% elif event.video_file %}
+                            <div class="ratio ratio-16x9">
+                                <video controls>
+                                    <source src="{{ url_for('uploaded_file', filename=event.video_file) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Registration Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-ticket-alt me-2"></i>Registration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if event.is_full %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            This event is fully booked!
+                        </div>
+                    {% else %}
+                        <div class="text-center mb-3">
+                            <h4 class="text-success">Available Spots</h4>
+                            <h2 class="text-primary">{{ event.available_spots }}</h2>
+                        </div>
+                        
+                        <a href="{{ url_for('register', event_id=event.id) }}" class="btn btn-primary w-100 btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-users me-1"></i>
+                            {{ event.registration_count }} people already registered
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Share Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-share-alt me-2"></i>Share Event
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="https://twitter.com/intent/tweet?text={{ event.title }}&url={{ request.url }}" 
+                           class="btn btn-outline-info btn-sm" target="_blank">
+                            <i class="fab fa-twitter me-2"></i>Share on Twitter
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" 
+                           class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="fab fa-facebook me-2"></i>Share on Facebook
+                        </a>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard('{{ request.url }}')">
+                            <i class="fas fa-copy me-2"></i>Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Link copied to clipboard!');
+    });
+}
+</script>
+{% endblock %}
